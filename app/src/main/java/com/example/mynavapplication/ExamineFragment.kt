@@ -6,13 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.mynavapplication.databinding.FragmentExamineBinding
+import com.example.mynavapplication.viewmodel.MbtiViewModel
 
 
 class ExamineFragment : Fragment() {
 
-
+    val viewModel : MbtiViewModel by activityViewModels()
     var binding: FragmentExamineBinding? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +41,34 @@ class ExamineFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        //viewmodel에 있는 mbti값이 달라지면, ui의 체크값이 달라짐.
+       viewModel.mbti.observe(viewLifecycleOwner){
+            binding?.chkE?.isChecked = viewModel.isE
+            binding?.chkN?.isChecked = viewModel.isN
+            binding?.chkF?.isChecked = viewModel.isF
+            binding?.chkJ?.isChecked = viewModel.isJ
+
+        }
+
+        //(ui의 체크값이 달라지면 )체크박스를 체크할때마다 VIEWMODEL에 반영되도록!
+        binding?.chkE?.setOnClickListener{
+            viewModel.setE(binding?.chkE?.isChecked ?: false)
+        }
+        binding?.chkN?.setOnClickListener{
+            viewModel.setN(binding?.chkN?.isChecked ?: false)
+        }
+        binding?.chkF?.setOnClickListener{
+            viewModel.setF(binding?.chkF?.isChecked ?: false)
+        }
+        binding?.chkJ?.setOnClickListener{
+            viewModel.setJ(binding?.chkJ?.isChecked ?: false)
+        }
+
+
+
+
 
         binding?.btnResult?.setOnClickListener{
             val result = examineMBTI()

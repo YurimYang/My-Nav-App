@@ -3,6 +3,7 @@ package com.example.mynavapplication.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mynavapplication.repository.MbtiRepository
 
 const val UNCHECKEDMBTI = "ISTP"
 
@@ -11,13 +12,20 @@ const val UNCHECKEDMBTI = "ISTP"
 class MbtiViewModel: ViewModel() {
     private val _mbti = MutableLiveData<String>(UNCHECKEDMBTI)
     val mbti : LiveData<String> = _mbti //밖에서 볼수있는 프로퍼티(내부적으로는 바꿀수 있는 livedata, 외부적으로는 바꿀수없는 mutable)
+    private val repository = MbtiRepository()
+    init {
+        repository.observeMbti(_mbti)
+    }
+
 
     private fun modifyMbti(index:Int, newValue: Char){
-        _mbti.value = _mbti.value?.let{
+        val newMbti = _mbti.value?.let{
             val chArr = it.toCharArray()
             chArr[index] = newValue
             String(chArr)
         }?: UNCHECKEDMBTI
+
+        repository.postMbti(newMbti)
     }
 
     val isE get() =_mbti.value?.get(0) == 'E'
